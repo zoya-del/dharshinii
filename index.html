@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>A Special Surprise For You ❤️</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Outfit:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-start: #140d2b;
+      --bg-mid: #2c1654;
+      --bg-end: #1f0b38;
+      --accent-pink: #ff7597;
+      --baby-pink: #ffb6c1;
+      --soft-pink: #ffd1dc;
+      --accent-purple: #9b5de5;
+      --accent-gold: #ffd166;
+      --card-bg: rgba(255, 255, 255, 0.08);
+      --card-border: rgba(255, 182, 193, 0.25);
+      --text-main: #ffffff;
+      --text-muted: #e2d9f3;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #3b1b63 0%, var(--bg-start) 60%, #0a0618 100%);
+      color: var(--text-main);
+      overflow-x: hidden;
+      position: relative;
+      user-select: none;
+    }
+
+    /* Floating Baby Pink Hearts Canvas */
+    #hearts-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Confetti Canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* Subtle Dreamy Floating Animation */
+    @keyframes gentleFloat {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-8px) rotate(0.4deg);
+      }
+    }
+
+    @keyframes softPulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.03);
+      }
+    }
+
+    /* App Container */
+    .app-container {
+      position: relative;
+      z-index: 10;
+      max-width: 480px;
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 40px 22px 35px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Progress Indicators */
+    .progress-bar-container {
+      width: 100%;
+      max-width: 320px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      position: relative;
+    }
+
+    .progress-track {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: rgba(255, 182, 193, 0.2);
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+
+    .progress-fill {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--baby-pink), var(--accent-pink), var(--accent-gold));
+      transform: translateY(-50%);
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 2;
+      width: 0%;
+      box-shadow: 0 0 10px var(--baby-pink);
+    }
+
+    .step-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      border: 2px solid rgba(255, 182, 193, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      z-index: 3;
+      transition: all 0.3s ease;
+      color: #fff;
+    }
+
+    .step-dot.active {
+      background: var(--accent-pink);
+      border-color: #fff;
+      box-shadow: 0 0 16px var(--accent-pink);
+      transform: scale(1.15);
+    }
+
+    .step-dot.done {
+      background: var(--accent-purple);
+      border-color: var(--soft-pink);
+    }
+
+    /* Page Cards with Floating Motion */
+    .step-card {
+      width: 100%;
+      background: var(--card-bg);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: 32px 22px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), 0 0 35px rgba(255, 182, 193, 0.12);
+      display: none;
+      opacity: 0;
+      position: relative;
+    }
+
+    .step-card.active {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: cardEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards, gentleFloat 4.5s ease-in-out 0.6s infinite;
+    }
+
+    @keyframes cardEntrance {
+      0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Badges & Icons */
+    .card-badge {
+      display: inline-block;
+      padding: 5px 15px;
+      border-radius: 20px;
+      background: rgba(255, 182, 193, 0.18);
+      border: 1px solid rgba(255, 182, 193, 0.45);
+      color: var(--soft-pink);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 12px rgba(255, 182, 193, 0.2);
+    }
+
+    .hero-icon {
+      font-size: 56px;
+      margin-bottom: 12px;
+      display: inline-block;
+      animation: softPulse 2.5s ease-in-out infinite alternate;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      color: #fff;
+      line-height: 1.3;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    p.lead-text {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      font-weight: 400;
+    }
+
+    /* Buttons with floating pulse */
+    .btn-action {
+      background: linear-gradient(135deg, #ff7597, #ff9a9e, #9b5de5);
+      background-size: 200% 200%;
+      color: #fff;
+      border: none;
+      padding: 14px 34px;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(255, 117, 151, 0.45);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      animation: gentleFloat 3s ease-in-out infinite alternate;
+    }
+
+    .btn-action:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 14px 32px rgba(255, 117, 151, 0.65);
+    }
+
+    .btn-action:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+    /* Page 1: Envelope */
+    .envelope-box {
+      width: 140px;
+      height: 110px;
+      background: linear-gradient(135deg, #ff9a9e, #fecfef);
+      border-radius: 16px;
+      position: relative;
+      margin: 15px 0 24px;
+      box-shadow: 0 15px 35px rgba(255, 154, 158, 0.45);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease;
+      animation: gentleFloat 3.5s ease-in-out infinite alternate;
+    }
+
+    .envelope-box:hover {
+      transform: scale(1.08) rotate(-2deg);
+    }
+
+    .wax-seal {
+      width: 44px;
+      height: 44px;
+      background: #ff4d79;
+      border-radius: 50%;
+      border: 3px solid #ffe5ec;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 15px rgba(255, 77, 121, 0.5);
+    }
+
+    /* Page 2: Floating Tap Hearts */
+    .tap-hearts-grid {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 22px;
+      width: 100%;
+    }
+
+    .tap-heart-item {
+      background: rgba(255, 182, 193, 0.1);
+      border: 1px dashed rgba(255, 182, 193, 0.4);
+      padding: 12px 10px;
+      border-radius: 18px;
+      cursor: pointer;
+      flex: 1;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: gentleFloat 4s ease-in-out infinite alternate;
+    }
+
+    .tap-heart-item:nth-child(2) {
+      animation-delay: 0.7s;
+    }
+
+    .tap-heart-item:nth-child(3) {
+      animation-delay: 1.4s;
+    }
+
+    .tap-heart-item.popped {
+      background: rgba(255, 117, 151, 0.3);
+      border: 1px solid var(--accent-pink);
+      transform: translateY(-5px);
+    }
+
+    .tap-heart-emoji {
+      font-size: 24px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .tap-heart-text {
+      font-size: 11px;
+      color: #fff;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    /* Page 3: Centered Thing Cards */
+    .flip-cards-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+      margin-bottom: 22px;
+    }
+
+    .secret-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 182, 193, 0.3);
+      border-radius: 20px;
+      padding: 16px 18px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      animation: gentleFloat 4.5s ease-in-out infinite alternate;
+    }
+
+    .secret-card:nth-child(2) { animation-delay: 0.8s; }
+    .secret-card:nth-child(3) { animation-delay: 1.6s; }
+
+    .secret-card.unlocked {
+      background: rgba(255, 117, 151, 0.22);
+      border-color: rgba(255, 182, 193, 0.6);
+      box-shadow: 0 0 20px rgba(255, 182, 193, 0.25);
+    }
+
+    .secret-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 4px 0;
+    }
+
+    .secret-card-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .lock-icon {
+      font-size: 15px;
+      opacity: 0.75;
+      margin-left: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .secret-card.unlocked .lock-icon {
+      opacity: 1;
+      color: var(--accent-gold);
+    }
+
+    .secret-card-desc {
+      font-size: 13.5px;
+      color: #ffffff;
+      line-height: 1.6;
+      margin-top: 12px;
+      display: none;
+      text-align: center;
+      animation: fadeIn 0.4s ease forwards;
+      background: rgba(255, 117, 151, 0.16);
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 182, 193, 0.28);
+    }
+
+    .secret-card.unlocked .secret-card-desc {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(-5px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Page 4: Song & Scratch Off Card */
+    .song-quote {
+      font-family: 'Caveat', cursive;
+      font-size: 22px;
+      line-height: 1.4;
+      color: #ffffff;
+      margin-bottom: 18px;
+      text-shadow: 0 0 14px rgba(255, 182, 193, 0.7);
+      padding: 0 10px;
+    }
+
+    .scratch-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 340px;
+      height: 210px;
+      border-radius: 22px;
+      overflow: hidden;
+      margin-bottom: 22px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(255, 182, 193, 0.25);
+      border: 1.5px solid rgba(255, 182, 193, 0.4);
+      animation: gentleFloat 4s ease-in-out infinite alternate;
+    }
+
+    .scratch-secret-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #2b1046, #68236f, #b93b6e);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .song-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 4px 14px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffd1dc;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .song-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      margin-bottom: 4px;
+    }
+
+    .song-subtitle {
+      font-size: 12px;
+      color: #f7efff;
+      margin-bottom: 14px;
+    }
+
+    .btn-play-revealed {
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      color: #fff;
+      border: none;
+      padding: 11px 24px;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(255, 65, 108, 0.5);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      animation: softPulse 2s infinite;
+    }
+
+    .btn-play-revealed:hover {
+      transform: scale(1.06);
+      box-shadow: 0 8px 25px rgba(255, 65, 108, 0.7);
+    }
+
+    .yt-video-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 8;
+      background: #000;
+      display: none;
+    }
+
+    .yt-video-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    #scratch-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      cursor: crosshair;
+      touch-action: none;
+      transition: opacity 0.5s ease;
+    }
+
+    /* Unlock Prompt Banner */
+    .song-unlock-alert {
+      display: none;
+      margin-bottom: 15px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      background: rgba(255, 209, 102, 0.2);
+      border: 1px solid var(--accent-gold);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      animation: fadeIn 0.4s ease;
+    }
+
+    /* Page 5: The Grand Proposal & Runaway Button */
+    .proposal-box {
+      width: 100%;
+      position: relative;
+    }
+
+    .big-question {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4, #ffd1ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .buttons-arena {
+      position: relative;
+      width: 100%;
+      height: 140px;
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .btn-yes {
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      color: #fff;
+      font-size: 19px;
+      font-weight: 800;
+      padding: 16px 36px;
+      border-radius: 40px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(255, 65, 108, 0.5);
+      animation: heartbeat 1.5s infinite;
+      z-index: 10;
+      transition: all 0.3s ease;
+    }
+
+    @keyframes heartbeat {
+      0% { transform: scale(1); }
+      14% { transform: scale(1.08); }
+      28% { transform: scale(1); }
+      42% { transform: scale(1.05); }
+      70% { transform: scale(1); }
+    }
+
+    .btn-no {
+      background: rgba(255, 255, 255, 0.15);
+      color: #f1f1f1;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 182, 193, 0.4);
+      cursor: pointer;
+      position: absolute;
+      transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+      z-index: 9;
+      user-select: none;
+    }
+
+    /* Challenge text requested at bottom of Page 5 */
+    .challenge-text {
+      margin-top: 15px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-gold);
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 10px rgba(255, 209, 102, 0.4);
+      font-style: italic;
+    }
+
+    /* Dodge tooltip */
+    .dodge-bubble {
+      position: absolute;
+      bottom: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-gold);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    /* Success Screen */
+    .success-celebration {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: zoomIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes zoomIn {
+      0% { opacity: 0; transform: scale(0.7); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .ring-emoji {
+      font-size: 70px;
+      margin-bottom: 15px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    /* Subtle footer */
+    .footer-note {
+      margin-top: 25px;
+      font-size: 11px;
+      color: rgba(255, 182, 193, 0.5);
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Baby Pink Hearts Canvas -->
+  <canvas id="hearts-canvas"></canvas>
+  <canvas id="confetti-canvas"></canvas>
+
+  <main class="app-container">
+
+    <!-- Progress Indicator -->
+    <div class="progress-bar-container" id="progressBar">
+      <div class="progress-track"></div>
+      <div class="progress-fill" id="progressFill"></div>
+      <div class="step-dot active" data-step="1">1</div>
+      <div class="step-dot" data-step="2">2</div>
+      <div class="step-dot" data-step="3">3</div>
+      <div class="step-dot" data-step="4">4</div>
+      <div class="step-dot" data-step="5">5</div>
+    </div>
+
+    <!-- ================= PAGE 1: The Teaser ================= -->
+    <div class="step-card active" id="card-1">
+      <span class="card-badge">✨ Just For You</span>
+      <div class="envelope-box" id="envelopeTrigger" onclick="goToStep(2)">
+        <div class="wax-seal">💌</div>
+      </div>
+      <h2>Hey... A Small Gift! 🎁</h2>
+      <p class="lead-text">
+        Madem konjam time iruka ?<br>
+        Indha letter ah unakkaga dhan romba kasta pattu special ah ready panniruken...
+      </p>
+      <button class="btn-action" onclick="goToStep(2)">
+        <span>Adutha step polaama ? ✨</span>
+      </button>
+    </div>
+
+    <!-- ================= PAGE 2: The Connection ================= -->
+    <div class="step-card" id="card-2">
+      <span class="card-badge">💫 Chapter 1</span>
+      <div class="hero-icon">🎧</div>
+      <h2>"Epdi Start Aachu..."</h2>
+      <p class="lead-text">
+        First time unkooda pesa start pannapo, normal-ah oru friend-nu dhaan nenachen...<br>
+        Aana enakke theriyama, eppo nee en day-oda <strong>most favorite notification</strong>-ah maarita!
+      </p>
+
+      <!-- Interactive 3 mini taps -->
+      <div class="tap-hearts-grid">
+        <div class="tap-heart-item" onclick="popHeart(this)">
+          <span class="tap-heart-emoji">💌</span>
+          <span class="tap-heart-text">Late Night Talks</span>
+        </div>
+        <div class="tap-heart-item" onclick="popHeart(this)">
+          <span class="tap-heart-emoji">☕</span>
+          <span class="tap-heart-text">Silly Arguments</span>
+        </div>
+        <div class="tap-heart-item" onclick="popHeart(this)">
+          <span class="tap-heart-emoji">📹</span>
+          <span class="tap-heart-text">Video Calls</span>
+        </div>
+      </div>
+
+      <button class="btn-action" onclick="goToStep(3)">
+        <span>Adutha step polaama ? ➡️</span>
+      </button>
+    </div>
+
+    <!-- ================= PAGE 3: Video Calls ================= -->
+    <div class="step-card" id="card-3">
+      <span class="card-badge">🌸 Chapter 2</span>
+      <div class="hero-icon">✨</div>
+      <h2>Video Calls</h2>
+      <p class="lead-text" style="margin-bottom: 18px;">
+        Tap ovvoru card mela pannunga to read 🤍
+      </p>
+
+      <div class="flip-cards-container">
+        <!-- FIRST THING -->
+        <div class="secret-card" onclick="unlockSecret(this)">
+          <div class="secret-card-header">
+            <span class="secret-card-title">FIRST THING</span>
+            <span class="lock-icon">🔒</span>
+          </div>
+          <p class="secret-card-desc">
+            Nallavelah anaki Joshi Video call Pannaah apdi pannala nah enna aagirukum nu thereyala nallavelah panna lah ⭐
+          </p>
+        </div>
+
+        <!-- SECOND THING -->
+        <div class="secret-card" onclick="unlockSecret(this)">
+          <div class="secret-card-header">
+            <span class="secret-card-title">SECOND THING</span>
+            <span class="lock-icon">🔒</span>
+          </div>
+          <p class="secret-card-desc">
+            Nee prank call pannadhum oru vagai la nalladhu dhan ! If nee Prank call pannala naa Un NO. save pannirukavey maaten !
+          </p>
+        </div>
+
+        <!-- THIRD THING -->
+        <div class="secret-card" onclick="unlockSecret(this)">
+          <div class="secret-card-header">
+            <span class="secret-card-title">THIRD THING</span>
+            <span class="lock-icon">🔒</span>
+          </div>
+          <p class="secret-card-desc">
+            Karthi ku dha naa thnkxx Sollanum , Avn Mattum onaku propose pannala nah onaku andha 144P name vandhurukaadhuh ! Andha name naala dha naa onna spl ah paathen ! illati un room la irukura matha ponnuga ta pesuna maari HI , BYE oda mudichirupen !
+          </p>
+        </div>
+      </div>
+
+      <button class="btn-action" id="card3NextBtn" onclick="goToStep(4)">
+        <span>Adutha step polaama ? ➡️</span>
+      </button>
+    </div>
+
+    <!-- ================= PAGE 4: SONG & Scratch Off ================= -->
+    <div class="step-card" id="card-4">
+      <span class="card-badge">🎵 Special Melody</span>
+      <div class="hero-icon">🎧</div>
+      <h2>SONG</h2>
+      
+      <p class="song-quote">
+        "Found this song recently , now it's all i play whenever I miss you 🤍"
+      </p>
+
+      <div class="song-unlock-alert" id="songUnlockAlert">
+        ✨ Song Unlocked! Tap Play to watch with video! 🎬
+      </div>
+
+      <div class="scratch-wrapper" id="scratchWrapper">
+        <!-- Secret Song Content under the scratch canvas -->
+        <div class="scratch-secret-content">
+          <span class="song-badge">🎵 Our Special Song</span>
+          <h4 class="song-title">Yedhayya Saami</h4>
+          <p class="song-subtitle">Vijay Deverakonda • Rashmika • Ranabaali</p>
+          <button class="btn-play-revealed" id="btnPlayRevealedSong" onclick="playSecretSong()">
+            <span>▶ Play Video Song 🎵</span>
+          </button>
+        </div>
+
+        <!-- Video Player Iframe (Shown on Play) -->
+        <div class="yt-video-wrapper" id="ytVideoWrapper">
+          <iframe id="ytVideoIframe" 
+                  src="" 
+                  title="YouTube video player" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                  allowfullscreen>
+          </iframe>
+        </div>
+
+        <!-- Canvas Scratch Card -->
+        <canvas id="scratch-canvas"></canvas>
+      </div>
+
+      <button class="btn-action" onclick="goToStep(5)">
+        <span>Adutha step polaama ? 🙈</span>
+      </button>
+    </div>
+
+    <!-- ================= PAGE 5: The Grand Proposal ================= -->
+    <div class="step-card" id="card-5">
+      <div class="proposal-box" id="proposalActiveBox">
+        <span class="card-badge">💍 The Grand Question</span>
+        <div class="hero-icon">💖</div>
+        <h1 class="big-question">Will You Be Mine Forever?</h1>
+        <p class="lead-text">
+          Life full-ah un kooda sirikanum, unna pathukittu sandhosama irukkanum nu aasa padren... ❤️
+        </p>
+
+        <div class="buttons-arena" id="btnArena">
+          <button class="btn-yes" id="btnYes" onclick="sheSaidYes()">YES! 💖</button>
+          <button class="btn-no" id="btnNo">No 😜</button>
+          <div class="dodge-bubble" id="dodgeBubble">Aiyoyo, No click panna mudiyadhu! 🏃‍♂️</div>
+        </div>
+
+        <p class="challenge-text">' mudinja NO kuduthuu paaruh Dii ! '</p>
+      </div>
+
+      <!-- Celebration Box (Hidden by default) -->
+      <div class="success-celebration" id="successBox">
+        <div class="ring-emoji">💍✨</div>
+        <h1 class="big-question" style="font-size: 30px;">SHE SAID YESSS!! 🥳🎉</h1>
+        <p class="lead-text" style="color: #fff; font-size: 16px;">
+          Officially you are stuck with me forever! ❤️<br>
+          No exchange, No return policy! 🙈✨
+        </p>
+        <p style="font-size: 13px; color: var(--accent-gold); margin-bottom: 24px;">
+          🎵 "Yedhayya Saami" playing for us... ❤️
+        </p>
+        <button class="btn-action" onclick="triggerScreenshotAlert()">
+          <span>Take Screenshot & Send Me 📸❤️</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="footer-note">Handcrafted with all my love ❤️</div>
+
+  </main>
+
+  <script>
+    /* ========================================================
+       1. Multi-Step Page Navigation
+       ======================================================== */
+    let currentStep = 1;
+    const totalSteps = 5;
+
+    function goToStep(stepNum) {
+      if (stepNum < 1 || stepNum > totalSteps) return;
+
+      document.querySelectorAll('.step-card').forEach(card => {
+        card.classList.remove('active');
+      });
+
+      const targetCard = document.getElementById(`card-${stepNum}`);
+      if (targetCard) {
+        targetCard.classList.add('active');
+      }
+
+      currentStep = stepNum;
+      updateProgressBar(stepNum);
+
+      if (stepNum === 4) {
+        setTimeout(initScratchCard, 200);
+      }
+
+      if (stepNum === 5) {
+        resetNoButton();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateProgressBar(step) {
+      const fillPercentage = ((step - 1) / (totalSteps - 1)) * 100;
+      document.getElementById('progressFill').style.width = `${fillPercentage}%`;
+
+      document.querySelectorAll('.step-dot').forEach(dot => {
+        const dotStep = parseInt(dot.getAttribute('data-step'));
+        dot.classList.remove('active', 'done');
+        if (dotStep === step) {
+          dot.classList.add('active');
+        } else if (dotStep < step) {
+          dot.classList.add('done');
+        }
+      });
+    }
+
+    /* ========================================================
+       2. Interactive Mini Features (Steps 2 & 3)
+       ======================================================== */
+    function popHeart(element) {
+      element.classList.toggle('popped');
+      createMiniParticles(element);
+    }
+
+    let unlockedSecretsCount = 0;
+    function unlockSecret(element) {
+      if (!element.classList.contains('unlocked')) {
+        element.classList.add('unlocked');
+        unlockedSecretsCount++;
+        createMiniParticles(element);
+        const lockIcon = element.querySelector('.lock-icon');
+        if (lockIcon) lockIcon.textContent = '⭐';
+      }
+    }
+
+    function createMiniParticles(element) {
+      const rect = element.getBoundingClientRect();
+      for (let i = 0; i < 6; i++) {
+        createConfettiBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 8);
+      }
+    }
+
+    /* ========================================================
+       3. Canvas Scratch Card & Video Play (Step 4)
+       ======================================================== */
+    let scratchInitialized = false;
+    let scratchMoveCount = 0;
+    let isSongRevealed = false;
+    const YOUTUBE_VIDEO_ID = '3a42y3LwiDE';
+
+    function initScratchCard() {
+      if (scratchInitialized) return;
+      const canvas = document.getElementById('scratch-canvas');
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      const container = canvas.parentElement;
+      canvas.width = container.offsetWidth;
+      canvas.height = container.offsetHeight;
+
+      // Draw Golden Holographic Scratch Layer
+      const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      grad.addColorStop(0, '#ffd166');
+      grad.addColorStop(0.3, '#f4a261');
+      grad.addColorStop(0.7, '#e76f51');
+      grad.addColorStop(1, '#ff7597');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Sparkles
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+      for (let i = 0; i < 45; i++) {
+        ctx.beginPath();
+        ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 3 + 1, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.fillStyle = '#300a38';
+      ctx.font = 'bold 16px Outfit, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('✨ Touch / Drag to Scratch & Reveal ✨', canvas.width / 2, canvas.height / 2);
+
+      let isDrawing = false;
+
+      function scratch(x, y) {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(x, y, 26, 0, Math.PI * 2);
+        ctx.fill();
+
+        scratchMoveCount++;
+        if (scratchMoveCount > 18 && !isSongRevealed) {
+          isSongRevealed = true;
+          document.getElementById('songUnlockAlert').style.display = 'block';
+          createConfettiBurst(window.innerWidth / 2, window.innerHeight * 0.45, 20);
+        }
+      }
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: clientX - rect.left,
+          y: clientY - rect.top
+        };
+      }
+
+      canvas.addEventListener('mousedown', (e) => { isDrawing = true; const p = getPos(e); scratch(p.x, p.y); });
+      window.addEventListener('mouseup', () => { isDrawing = false; });
+      canvas.addEventListener('mousemove', (e) => { if (!isDrawing) return; const p = getPos(e); scratch(p.x, p.y); });
+
+      canvas.addEventListener('touchstart', (e) => { isDrawing = true; const p = getPos(e); scratch(p.x, p.y); e.preventDefault(); }, { passive: false });
+      window.addEventListener('touchend', () => { isDrawing = false; });
+      canvas.addEventListener('touchmove', (e) => { if (!isDrawing) return; const p = getPos(e); scratch(p.x, p.y); e.preventDefault(); }, { passive: false });
+
+      scratchInitialized = true;
+    }
+
+    function playSecretSong() {
+      const canvas = document.getElementById('scratch-canvas');
+      if (canvas) {
+        canvas.style.opacity = '0';
+        setTimeout(() => { canvas.style.display = 'none'; }, 400);
+      }
+
+      const videoWrapper = document.getElementById('ytVideoWrapper');
+      const videoIframe = document.getElementById('ytVideoIframe');
+      
+      videoIframe.src = `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&playsinline=1&rel=0`;
+      videoWrapper.style.display = 'block';
+
+      createConfettiBurst(window.innerWidth / 2, window.innerHeight * 0.45, 25);
+    }
+
+    /* ========================================================
+       4. Step 5: The Fun Runaway "NO" Button Logic
+       ======================================================== */
+    const btnNo = document.getElementById('btnNo');
+    const dodgeBubble = document.getElementById('dodgeBubble');
+    let dodgeCount = 0;
+
+    const funnyQuotes = [
+      "Aiyoyo, No click panna mudiyadhu! 🏃‍♂️",
+      "Mudinja NO kuduthuu paaruh Dii! 😜",
+      "No option is not available boss! 😜",
+      "Try pannalum kedaikaadhu! 😂",
+      "Look at that big pink button 👉💖",
+      "Sari sari, Yes dhaan click pannanum! 🥰"
+    ];
+
+    function resetNoButton() {
+      btnNo.style.position = 'relative';
+      btnNo.style.left = '0px';
+      btnNo.style.top = '0px';
+      btnNo.style.transform = 'scale(1)';
+    }
+
+    function dodgeNoButton(e) {
+      if (e) e.preventDefault();
+      dodgeCount++;
+
+      const arena = document.getElementById('btnArena');
+      const arenaRect = arena.getBoundingClientRect();
+      const btnRect = btnNo.getBoundingClientRect();
+
+      btnNo.style.position = 'absolute';
+
+      const maxX = arenaRect.width - btnRect.width - 20;
+      const maxY = arenaRect.height - btnRect.height - 10;
+
+      const randomX = Math.max(10, Math.floor(Math.random() * maxX));
+      const randomY = Math.max(10, Math.floor(Math.random() * maxY));
+
+      btnNo.style.left = `${randomX}px`;
+      btnNo.style.top = `${randomY}px`;
+
+      dodgeBubble.textContent = funnyQuotes[(dodgeCount - 1) % funnyQuotes.length];
+      dodgeBubble.style.opacity = '1';
+
+      if (dodgeCount > 5) {
+        btnNo.style.transform = 'scale(0.4)';
+      }
+    }
+
+    btnNo.addEventListener('mouseover', dodgeNoButton);
+    btnNo.addEventListener('touchstart', dodgeNoButton, { passive: false });
+    btnNo.addEventListener('click', dodgeNoButton);
+
+    /* ========================================================
+       5. Grand Yes Celebration & Confetti
+       ======================================================== */
+    function sheSaidYes() {
+      document.getElementById('proposalActiveBox').style.display = 'none';
+      document.getElementById('successBox').style.display = 'flex';
+
+      launchCelebrationConfetti();
+    }
+
+    function triggerScreenshotAlert() {
+      alert("Screenshot eduthu unga special someone-ku anupunga! ❤️💍");
+    }
+
+    /* ========================================================
+       6. Floating Baby Pink Hearts Engine
+       ======================================================== */
+    const hCanvas = document.getElementById('hearts-canvas');
+    const hCtx = hCanvas.getContext('2d');
+    let heartParticles = [];
+
+    function resizeHearts() {
+      hCanvas.width = window.innerWidth;
+      hCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeHearts);
+    resizeHearts();
+
+    function drawVectorHeart(ctx, x, y, size, color, alpha, rot) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rot);
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      const topH = size * 0.35;
+      ctx.moveTo(0, topH);
+      ctx.bezierCurveTo(-size / 2, -topH, -size, size / 3, 0, size);
+      ctx.bezierCurveTo(size, size / 3, size / 2, -topH, 0, topH);
+      ctx.closePath();
+      ctx.shadowColor = '#ffb6c1';
+      ctx.shadowBlur = 10;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function initFloatingHearts() {
+      heartParticles = [];
+      for (let i = 0; i < 35; i++) {
+        heartParticles.push({
+          x: Math.random() * hCanvas.width,
+          y: Math.random() * hCanvas.height,
+          size: Math.random() * 14 + 10,
+          speedY: Math.random() * 0.8 + 0.4,
+          speedX: (Math.random() - 0.5) * 0.5,
+          alpha: Math.random() * 0.5 + 0.3,
+          rot: (Math.random() - 0.5) * 0.4,
+          rotSpeed: (Math.random() - 0.5) * 0.01,
+          color: ['#ffb6c1', '#ffd1dc', '#ffc0cb', '#fbcfe8'][Math.floor(Math.random() * 4)]
+        });
+      }
+    }
+    initFloatingHearts();
+
+    function renderFloatingHearts() {
+      hCtx.clearRect(0, 0, hCanvas.width, hCanvas.height);
+      for (let p of heartParticles) {
+        p.y -= p.speedY;
+        p.x += Math.sin(p.y * 0.01) * 0.6;
+        p.rot += p.rotSpeed;
+
+        if (p.y < -30) {
+          p.y = hCanvas.height + 20;
+          p.x = Math.random() * hCanvas.width;
+        }
+
+        drawVectorHeart(hCtx, p.x, p.y, p.size, p.color, p.alpha, p.rot);
+      }
+      requestAnimationFrame(renderFloatingHearts);
+    }
+    renderFloatingHearts();
+
+    /* ========================================================
+       7. High Performance Celebration Confetti Engine
+       ======================================================== */
+    const cCanvas = document.getElementById('confetti-canvas');
+    const cCtx = cCanvas.getContext('2d');
+    let confettiList = [];
+
+    function resizeConfetti() {
+      cCanvas.width = window.innerWidth;
+      cCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeConfetti);
+    resizeConfetti();
+
+    function createConfettiBurst(x, y, count = 25) {
+      const colors = ['#ff7597', '#ffb6c1', '#ffd166', '#9b5de5', '#06d6a0', '#ff9a9e'];
+      for (let i = 0; i < count; i++) {
+        confettiList.push({
+          x: x,
+          y: y,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          vx: (Math.random() - 0.5) * 12,
+          vy: (Math.random() - 0.5) * 12 - 4,
+          gravity: 0.25,
+          opacity: 1,
+          rot: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 10
+        });
+      }
+    }
+
+    function launchCelebrationConfetti() {
+      const interval = setInterval(() => {
+        createConfettiBurst(window.innerWidth * 0.2, window.innerHeight * 0.4, 30);
+        createConfettiBurst(window.innerWidth * 0.8, window.innerHeight * 0.4, 30);
+        createConfettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.2, 40);
+      }, 400);
+
+      setTimeout(() => clearInterval(interval), 5000);
+    }
+
+    function renderConfetti() {
+      cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+      for (let i = confettiList.length - 1; i >= 0; i--) {
+        const p = confettiList[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += p.gravity;
+        p.rot += p.rotSpeed;
+        p.opacity -= 0.012;
+
+        if (p.opacity <= 0 || p.y > cCanvas.height + 20) {
+          confettiList.splice(i, 1);
+          continue;
+        }
+
+        cCtx.save();
+        cCtx.translate(p.x, p.y);
+        cCtx.rotate((p.rot * Math.PI) / 180);
+        cCtx.globalAlpha = p.opacity;
+        cCtx.fillStyle = p.color;
+        cCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 1.2);
+        cCtx.restore();
+      }
+      requestAnimationFrame(renderConfetti);
+    }
+    renderConfetti();
+
+  </script>
+</body>
+</html>
